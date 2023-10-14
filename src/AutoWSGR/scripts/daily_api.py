@@ -4,7 +4,13 @@ from types import SimpleNamespace as SN
 from AutoWSGR.constants import literals
 from AutoWSGR.fight.battle import BattlePlan
 from AutoWSGR.fight.normal_fight import NormalFightPlan
-from AutoWSGR.game.game_operation import Expedition, RepairByBath, get_rewards
+from AutoWSGR.game.game_operation import (
+    Expedition,
+    RepairByBath,
+    SetSupport,
+    get_rewards,
+)
+from AutoWSGR.ocr.digit import get_loot_and_ship
 from AutoWSGR.scripts.main import start_script
 
 
@@ -45,9 +51,17 @@ class DailyOperation:
             while ret == literals.OPERATION_SUCCESS_FLAG:
                 ret = self.battle_plan.run()
 
+        # 自动开启支援
+        if self.config.auto_set_support:
+            SetSupport(self.timer, True)
+
+        if self.config.stop_maxship:
+            self.config.stop_maxship = False
+            # get_loot_and_ship(self.timer)  # 获取胖次掉落和船只掉落数据
+
         # 自动出征
         if self.config.auto_normal_fight:
-            while self._has_unfinished():
+            while self._has_unfinished() and self._ship_max():
                 task_id = self._get_unfinished()
 
                 plan = self.fight_plans[task_id]
@@ -89,3 +103,12 @@ class DailyOperation:
     def _bath_repair(self):
         if self.config.auto_bath_repair:
             RepairByBath(self.timer)
+
+    def _ship_max(self):
+        if self.config.stop_maxship:
+            if self.timer.got_ship_num < 500:
+                return True
+            else:
+                return False
+        else:
+            return True

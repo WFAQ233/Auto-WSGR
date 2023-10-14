@@ -60,7 +60,7 @@ class NormalFightInfo(FightInfo):
             "fight_period": ["night", "result"],
             "night": {
                 "yes": ["result"],
-                "no": [["result", 5]],
+                "no": [["result", 10]],
             },
             "result": [
                 "proceed",
@@ -77,7 +77,7 @@ class NormalFightInfo(FightInfo):
             "fight_condition": [IMG.fight_image[10], 22.5],
             "spot_enemy_success": [IMG.fight_image[2], 22.5],
             "formation": [IMG.fight_image[1], 22.5],
-            "fight_period": [IMG.symbol_image[4], 7.5],
+            "fight_period": [IMG.symbol_image[4], 30],
             "night": [IMG.fight_image[6], 150],
             "result": [IMG.fight_image[3], 90],
             "get_ship": [IMG.symbol_image[8], 5],
@@ -103,7 +103,7 @@ class NormalFightInfo(FightInfo):
             self.last_state in ["proceed", "fight_condition"]
             or self.last_action == "detour"
         ):
-            self.timer.Android.click(380, 520, delay=0, enable_subprocess=True)
+            self.timer.Android.click(250, 520, delay=0, enable_subprocess=True)
 
         self.timer.update_screen()
 
@@ -141,7 +141,7 @@ class NormalFightInfo(FightInfo):
         for i in range(26):
             ch = chr(ord("A") + i)
             if ch not in self.point_positions.keys():
-                break
+                continue
             if CalcDis(self.point_positions[ch], self.ship_position) < CalcDis(
                 self.point_positions[self.node], self.ship_position
             ):
